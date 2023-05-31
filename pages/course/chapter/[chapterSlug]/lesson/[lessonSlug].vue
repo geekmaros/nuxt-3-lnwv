@@ -2,17 +2,52 @@
 const course = useCourse();
 const route = useRoute();
 
+definePageMeta({
+    validate({ params }) {
+        const course = useCourse();
+
+        const chapter = course.chapters.find(
+            (chapter) => chapter.slug === params.chapterSlug
+        );
+
+        if (!chapter) {
+            throw createError({
+                message: "Chapter not found",
+                statusCode: 404,
+            })
+        }
+
+        const lesson = chapter.lessons.find(
+            (lesson) => lesson.slug === params.lessonSlug
+        );
+
+        if(!lesson) {
+            throw createError({
+                message: "Lesson not found",
+                statusCode: 404,
+            })
+        }
+        return true
+    }
+})
+
+if (route.params.lessonSlug === "3-typing-component-events") {
+  console.log(route.params.paramthatdoesnotexist.capitalizeIsNotAMethod());
+}
+
 const chapter = computed(() => {
   return course.chapters.find(
     (chapter) => chapter.slug === route.params.chapterSlug
   );
 });
 
+
 const lesson = computed(() => {
   return chapter.value.lessons.find(
     (lesson) => lesson.slug === route.params.lessonSlug
   );
 });
+
 
 const title = computed(() => {
   return `${lesson.value.title} - ${course.title}`;
@@ -73,7 +108,7 @@ const toggleComplete = () => {
 
     <LessonCompleteButton
       :model-value="isLessonComplete"
-      @update:model-value="toggleComplete"
+      @update:model-value="throw createError('Not implemented yet');"
     />
   </div>
 </template>
